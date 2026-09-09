@@ -36,7 +36,7 @@ function AdminLogin() {
             if (res.data.success) {
                 localStorage.setItem("token", res.data.token);
                 toast.success("Welcome back, Admin!");
-                navigate("/admin");
+                navigate("/admin/dashboard");
             }
         } catch (err) {
             console.error(err);

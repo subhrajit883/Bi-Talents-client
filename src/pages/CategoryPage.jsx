@@ -700,7 +700,7 @@ const CategoryPage = () => {
                                                 />
 
                                                 {/* Heart Icon */}
-                                                <button
+                                                {/* <button
                                                     type="button"
                                                     className="absolute w-8 h-8 top-3 right-3 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-white hover:scale-110 transition-all duration-200"
                                                     onClick={(e) =>
@@ -711,7 +711,7 @@ const CategoryPage = () => {
                                                         size={16}
                                                         className="text-gray-500 hover:text-blue-600 transition-colors"
                                                     />
-                                                </button>
+                                                </button> */}
 
                                                 {/* Verified Badge */}
                                                 {/* <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-600 text-white text-xs font-semibold shadow-md shadow-blue-200">
@@ -728,7 +728,7 @@ const CategoryPage = () => {
 
                                                 <p className="text-xs text-gray-500 mb-2.5">
                                                     {talent.age} Years ·{" "}
-                                                    {catName}
+                                                    {talent.works[0] || "Talent"}
                                                 </p>
 
                                                 <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-3.5">

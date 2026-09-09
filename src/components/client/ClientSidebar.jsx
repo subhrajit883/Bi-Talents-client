@@ -16,30 +16,19 @@ import {
 
 import logo from "../../assets/bia.png";
 import { AiOutlineUserAdd } from "react-icons/ai";
-import { FaHeart } from "react-icons/fa";
 
 const NAV_ITEMS = [
-    { label: "Dashboard", icon: FiLayout, to: "/admin/dashboard" },
-    { label: "Add Candidate", icon: AiOutlineUserAdd, to: "/admin/candidates" },
-        { label: "All Candidates", icon: FiUsers, to: "/admin/allcandidates" },
-    { label: "Categories", icon: FiGrid, to: "/admin/categories" },
-    { label: "Interests", icon: FaHeart , to: "/admin/client-interests" },
-    { label: "Clients", icon: FiUserCheck, to: "/admin/clients" },
-    { label: "Enquiries", icon: FiMessageCircle, to: "/admin/enquiries" },
-    // { label: "Settings", icon: FiSettings, to: "/admin/settings" },
+    { label: "Dashboard", icon: FiLayout, to: "/client/dashboard" },
+    { label: "", icon: AiOutlineUserAdd, to: "/client/candidates" },
 ];
 
-const AdminSidebar = () => {
+const ClientSidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const closeSidebar = () => {
         setIsOpen(false);
     };
 
-const AdminLogout = () => {
-        localStorage.removeItem("token");
-        window.location.href = "/";
-    };
     return (
         <>
             {isOpen && (
@@ -123,7 +112,7 @@ const AdminLogout = () => {
                         );
                     })}
                 </nav>
-
+                
                 <div className="px-4 py-4 mt-auto">
                     <div className="h-px bg-white/10 mb-4" />
 
@@ -139,9 +128,7 @@ const AdminLogout = () => {
                             hover:bg-white/5
                             hover:text-white
                             transition-all duration-200
-                            cursor-pointer
                         "
-                        onClick={AdminLogout}
                     >
                         <FiLogOut
                             size={19}
@@ -152,6 +139,9 @@ const AdminLogout = () => {
                     </button>
                 </div>
 
+                {/* =====================================
+                    MOBILE TOGGLE BUTTON
+                ===================================== */}
                 <button
                     type="button"
                     onClick={() => setIsOpen((prev) => !prev)}
@@ -200,5 +190,5 @@ const AdminLogout = () => {
     );
 };
 
-export default AdminSidebar;
+export default ClientSidebar;
 

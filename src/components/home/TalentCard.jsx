@@ -40,12 +40,12 @@ const TalentCard = ({ talent }) => {
                 </button> */}
 
                 {/* Verified badge */}
-                <div className="absolute top-2 right-2 bg-white rounded-full p-0.5 shadow-sm">
+                {/* <div className="absolute top-2 right-2 bg-white rounded-full p-0.5 shadow-sm">
                     <FiHeart
                         size={18}
                         className="text-blue-500"
                     />
-                </div>
+                </div> */}
             </div>
 
             {/* Info */}

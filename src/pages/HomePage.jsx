@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -18,8 +17,8 @@ import {
 import { HiCheckBadge } from "react-icons/hi2";
 import { categoryUrl, talentUrl } from "../config/config";
 import TalentRow from "../components/home/TalentRow";
-
-// ─── Skeleton Card ───────────────────────────────────────────────────────────
+import { BiSolidZap } from "react-icons/bi";
+import { motion } from "framer-motion";
 const SkeletonCard = () => (
     <div className="shrink-0 w-44 animate-pulse">
         <div className="relative rounded-xl overflow-hidden bg-gray-200 h-52 mb-2"></div>
@@ -29,7 +28,6 @@ const SkeletonCard = () => (
     </div>
 );
 
-// ─── Main HomePage ───────────────────────────────────────────────────────────
 function HomePage() {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
@@ -93,207 +91,894 @@ function HomePage() {
         fetchCategoryNews();
     }, []);
 
-    // ─── Fetch Hero Talents ──────────────────────────────────────────────────
-
     return (
         <div className="bg-white min-h-screen">
 
-            {/* ── HERO ───────────────────────────────────────────────────── */}
-            <section className="relative overflow-hidden bg-linear-to-br from-slate-50 via-blue-100/30 to-white">
+            <section className="relative overflow-hidden bg-white">
+                {/* =========================================================
+        BACKGROUND ATMOSPHERE
+    ========================================================= */}
+                <div className="pointer-events-none absolute inset-0 overflow-hidden">
 
-                <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
+                    {/* Blue glow */}
+                    <motion.div
+                        animate={{
+                            scale: [1, 1.08, 1],
+                            opacity: [0.5, 0.7, 0.5],
+                        }}
+                        transition={{
+                            duration: 8,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                        }}
+                        className="absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-blue-100/60 blur-3xl"
+                    />
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                    {/* Indigo glow */}
+                    <motion.div
+                        animate={{
+                            scale: [1, 1.06, 1],
+                            x: [0, 20, 0],
+                        }}
+                        transition={{
+                            duration: 9,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                        }}
+                        className="absolute -left-40 top-1/2 h-[420px] w-[420px] rounded-full bg-indigo-100/40 blur-3xl"
+                    />
 
-                        {/* ── LEFT CONTENT ────────────────────────────────── */}
-                        <div className="space-y-6 z-10 relative">
+                    {/* Sky glow */}
+                    <motion.div
+                        animate={{
+                            y: [0, -25, 0],
+                            opacity: [0.4, 0.7, 0.4],
+                        }}
+                        transition={{
+                            duration: 7,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                        }}
+                        className="absolute bottom-0 right-1/3 h-72 w-72 rounded-full bg-sky-100/50 blur-3xl"
+                    />
 
-                            {/* <div className="inline-flex items-center gap-2 bg-white border border-blue-100 rounded-full px-4 py-1.5 shadow-sm">
+                </div>
 
-                                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                {/* =========================================================
+        MAIN CONTAINER
+    ========================================================= */}
+                <div className="relative mx-auto max-w-7xl px-6 py-14 lg:py-20">
 
-                             <span className="text-sm text-gray-600 font-medium">
-                                    Connecting Talent with Opportunity
-                                </span> 
+                    <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[0.9fr_1.1fr] xl:gap-16">
 
-                            </div> */}
+                        {/* =====================================================
+                LEFT CONTENT
+            ===================================================== */}
+                        <motion.div
+                            initial="hidden"
+                            animate="show"
+                            variants={{
+                                hidden: {},
+                                show: {
+                                    transition: {
+                                        staggerChildren: 0.12,
+                                    },
+                                },
+                            }}
+                            className="relative z-10 max-w-xl"
+                        >
+                            {/* Eyebrow */}
 
-                            <h1 className="text-4xl lg:text-5xl text-gray-900 leading-tight font-bold">
-                                Find the Right{" "}
-                                <span className="text-blue-600">
-                                    Talent for Your
+                            <motion.div
+                                variants={{
+                                    hidden: {
+                                        opacity: 0,
+                                        y: 20,
+                                    },
+                                    show: {
+                                        opacity: 1,
+                                        y: 0,
+                                        transition: {
+                                            duration: 0.7,
+                                            ease: [0.22, 1, 0.36, 1],
+                                        },
+                                    },
+                                }}
+                                className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-blue-100 bg-blue-50 px-3.5 py-2 shadow-sm"
+                            >
+                                <span className="relative flex h-2.5 w-2.5">
+                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-60" />
+
+                                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-blue-600" />
+                                </span>
+
+                                <span className="text-xs font-semibold text-blue-700 sm:text-sm">
+                                    Discover Exceptional Talent
+                                </span>
+                            </motion.div>
+
+                            {/* =================================================
+                    HEADING
+                ================================================= */}
+                            <motion.h1
+                                variants={{
+                                    hidden: {},
+                                    show: {
+                                        transition: {
+                                            staggerChildren: 0.14,
+                                        },
+                                    },
+                                }}
+                                initial="hidden"
+                                animate="show"
+                                className="text-[40px] montserrat-bold font-semibold leading-[1.25] text-slate-950 lg:text-[58px] xl:text-[64px]"
+                            >
+
+                                {/* Find the Right */}
+                                <motion.span
+                                    variants={{
+                                        hidden: {
+                                            opacity: 0,
+                                            y: 45,
+                                        },
+                                        show: {
+                                            opacity: 1,
+                                            y: 0,
+                                            transition: {
+                                                duration: 0.8,
+                                                ease: [0.22, 1, 0.36, 1],
+                                            },
+                                        },
+                                    }}
+                                    className="block"
+                                >
+                                    Find the Right
+                                </motion.span>
+
+                                {/* Talent for Your */}
+                                <span className="mt-1 block">
+
+                                    <motion.span
+                                        variants={{
+                                            hidden: {
+                                                opacity: 0,
+                                                y: 45,
+                                            },
+                                            show: {
+                                                opacity: 1,
+                                                y: 0,
+                                                transition: {
+                                                    duration: 0.8,
+                                                    ease: [0.22, 1, 0.36, 1],
+                                                },
+                                            },
+                                        }}
+                                        className="relative inline-block"
+                                    >
+                                        <motion.span
+                                            animate={{
+                                                backgroundPosition: [
+                                                    "0% 50%",
+                                                    "100% 50%",
+                                                    "0% 50%",
+                                                ],
+                                            }}
+                                            transition={{
+                                                duration: 5,
+                                                repeat: Infinity,
+                                                ease: "linear",
+                                            }}
+                                            className="relative z-10 inline-block bg-linear-to-r from-blue-400 via-blue-600 to-blue-700 bg-[length:200%_200%] bg-clip-text text-transparent"
+                                        >
+                                            Talent
+                                        </motion.span>
+
+                                        {/* Animated underline */}
+                                        {/* <motion.span
+                                initial={{ width: 0 }}
+                                animate={{ width: "100%" }}
+                                transition={{
+                                    delay: 1,
+                                    duration: 0.8,
+                                    ease: [0.22, 1, 0.36, 1],
+                                }}
+                                className="absolute bottom-[-5px] left-0 h-2 rounded-full bg-blue-100/80"
+                            />*/}
+                                    </motion.span>
+
+                                    <motion.span
+                                        variants={{
+                                            hidden: {
+                                                opacity: 0,
+                                                y: 45,
+                                            },
+                                            show: {
+                                                opacity: 1,
+                                                y: 0,
+                                                transition: {
+                                                    duration: 0.8,
+                                                    ease: [0.22, 1, 0.36, 1],
+                                                },
+                                            },
+                                        }}
+                                        className="text-slate-950"
+                                    >
+                                        {" "}for Your
+                                    </motion.span>
+                                </span>
+
+                                {/* Next Project */}
+                                <motion.span
+                                    variants={{
+                                        hidden: {
+                                            opacity: 0,
+                                            y: 45,
+                                        },
+                                        show: {
+                                            opacity: 1,
+                                            y: 0,
+                                            transition: {
+                                                duration: 0.8,
+                                                ease: [0.22, 1, 0.36, 1],
+                                            },
+                                        },
+                                    }}
+                                    className="mt-1 block"
+                                >
+                                    Next{" "}
+
+                                    <motion.span
+                                        animate={{
+                                            backgroundPosition: [
+                                                "0% 50%",
+                                                "100% 50%",
+                                                "0% 50%",
+                                            ],
+                                        }}
+                                        transition={{
+                                            duration: 4,
+                                            repeat: Infinity,
+                                            ease: "linear",
+                                        }}
+                                        className="inline-block bg-linear-to-r from-blue-400 via-blue-600 to-blue-700 bg-[length:200%_200%] bg-clip-text text-transparent"
+                                    >
+                                        Project
+                                    </motion.span>
+                                </motion.span>
+
+                            </motion.h1>
+
+                            {/* =================================================
+                    DESCRIPTION
+                ================================================= */}
+                            <motion.p
+                                variants={{
+                                    hidden: {
+                                        opacity: 0,
+                                        y: 25,
+                                    },
+                                    show: {
+                                        opacity: 1,
+                                        y: 0,
+                                        transition: {
+                                            duration: 0.7,
+                                            ease: [0.22, 1, 0.36, 1],
+                                        },
+                                    },
+                                }}
+                                className="mt-7 max-w-lg text-base leading-relaxed text-slate-500 sm:text-lg"
+                            >
+                                Discover, connect, and hire exceptional professionals
+                                across{" "}
+                                <span className="font-semibold text-slate-700">
+                                    modelling, acting, dancing, singing
                                 </span>{" "}
-                                Next Project
-                            </h1>
+                                and more — all in one place.
+                            </motion.p>
 
-                            <p className="text-gray-500 text-base leading-relaxed max-w-md">
-                                Discover, connect, and hire professional talents
-                                across modelling, acting, dancing, singing and
-                                more.
-                            </p>
+                            {/* =================================================
+                    CTA BUTTONS
+                ================================================= */}
+                            <motion.div
+                                variants={{
+                                    hidden: {
+                                        opacity: 0,
+                                        y: 25,
+                                    },
+                                    show: {
+                                        opacity: 1,
+                                        y: 0,
+                                        transition: {
+                                            duration: 0.7,
+                                        },
+                                    },
+                                }}
+                                className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center"
+                            >
 
-                            <div className="flex items-center gap-4">
-
+                                {/* Browse */}
                                 <Link
                                     to="/talents"
-                                    id="hero-browse-btn"
-                                    className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-md shadow-blue-200 hover:shadow-lg hover:-translate-y-0.5"
+                                    className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-2xl bg-linear-to-r from-blue-500 to-blue-700 px-6 py-3.5 text-sm font-bold text-white shadow-xl shadow-blue-500/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/30"
                                 >
-                                    Browse Talents
-                                    <FiArrowRight size={16} />
-                                </Link>
-
-                                {/* <button
-                                    id="hero-how-it-works-btn"
-                                    className="flex items-center gap-2 text-gray-700 font-medium hover:text-blue-600 transition-colors"
-                                >
-                                    <span className="flex items-center justify-center w-8 h-8 rounded-full border border-gray-300 hover:border-blue-400 transition-colors">
-                                        <FiPlay size={12} className="ml-0.5" />
-                                    </span>
-
-                                    How It Works
-                                </button> */}
-
-                            </div>
-
-                            <div className="flex items-center gap-8 pt-2">
-
-                                <div className="flex items-center gap-2">
-                                    <FiUsers
-                                        size={20}
-                                        className="text-blue-500"
+                                    {/* Shine */}
+                                    <motion.span
+                                        animate={{
+                                            x: ["-120%", "120%"],
+                                        }}
+                                        transition={{
+                                            duration: 1.8,
+                                            repeat: Infinity,
+                                            repeatDelay: 3,
+                                            ease: "easeInOut",
+                                        }}
+                                        className="absolute inset-y-0 left-0 w-1/2 skew-x-[-20deg] bg-linear-to-r from-transparent via-white/20 to-transparent"
                                     />
 
+                                    <span className="relative">
+                                        Browse Talents
+                                    </span>
+
+                                    <FiArrowRight
+                                        size={17}
+                                        className="relative transition-transform duration-300 group-hover:translate-x-1"
+                                    />
+                                </Link>
+
+                                {/* About */}
+                                <Link
+                                    to="/about"
+                                    className="group inline-flex items-center justify-center gap-2.5 rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-blue-700 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-300 hover:text-blue-600 hover:shadow-lg"
+                                >
+                                    How It Works
+
+                                    <span className="text-lg transition-transform duration-300 group-hover:translate-x-1">
+                                        →
+                                    </span>
+                                </Link>
+
+                            </motion.div>
+
+                            {/* =================================================
+                    TRUST / STATS
+                ================================================= */}
+                            <motion.div
+                                variants={{
+                                    hidden: {
+                                        opacity: 0,
+                                        y: 25,
+                                    },
+                                    show: {
+                                        opacity: 1,
+                                        y: 0,
+                                        transition: {
+                                            duration: 0.7,
+                                        },
+                                    },
+                                }}
+                                className="mt-9 flex flex-nowrap items-center gap-x-4 overflow-x-auto border-t border-slate-100 pt-7 sm:gap-x-8"
+                            >
+
+                                {/* Talents */}
+                                <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 sm:h-10 sm:w-10">
+                                        <FiUsers size={17} />
+                                    </div>
+
                                     <div>
-                                        <p className="font-bold text-gray-900 text-lg">
+                                        <p className="text-base font-bold leading-none text-slate-900 sm:text-lg">
                                             100+
                                         </p>
 
-                                        <p className=" text-gray-400 text-md">
+                                        <p className="mt-1 whitespace-nowrap text-[10px] text-slate-400 sm:text-xs">
                                             Talents
                                         </p>
                                     </div>
                                 </div>
 
-                                {/* <div className="flex items-center gap-2">
-                                    <FiBriefcase
-                                        size={20}
-                                        className="text-blue-500"
-                                    />
+                                {/* Divider */}
+                                <div className="hidden h-9 w-px shrink-0 bg-slate-200 sm:block" />
 
-                                    <div>
-                                        <p className="font-bold text-gray-900 text-lg">
-                                            50+
-                                        </p>
-
-                                        <p className="text-xs text-gray-400">
-                                            Happy Clients
-                                        </p>
+                                {/* Verified */}
+                                <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 sm:h-10 sm:w-10">
+                                        <HiCheckBadge size={19} />
                                     </div>
-                                </div> */}
-
-                                <div className="flex items-center gap-2">
-                                    <FiShield
-                                        size={20}
-                                        className="text-blue-500"
-                                    />
 
                                     <div>
-                                        <p className="font-bold text-gray-900 text-lg">
+                                        <p className="text-base font-bold leading-none text-slate-900 sm:text-lg">
                                             Verified
                                         </p>
-                                        <p className="text-md text-gray-400">
-                                            &amp; Trusted
+
+                                        <p className="mt-1 whitespace-nowrap text-[10px] text-slate-400 sm:text-xs">
+                                            Talents
                                         </p>
                                     </div>
                                 </div>
 
-                            </div>
+                                {/* Divider */}
+                                <div className="hidden h-9 w-px shrink-0 bg-slate-200 sm:block" />
 
-                        </div>
+                                {/* Fast */}
+                                <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600 sm:h-10 sm:w-10">
+                                        <BiSolidZap size={19} />
+                                    </div>
 
-                        {/* ── RIGHT: THREE TALENT IMAGES ─────────────────── */}
-                        <div className="relative flex justify-center items-center min-h-90 lg:min-h-107.5">
+                                    <div>
+                                        <p className="text-base font-bold leading-none text-slate-900 sm:text-lg">
+                                            Fast & Easy
+                                        </p>
 
-                            <div className="relative w-full max-w-[560px] h-[340px] sm:h-[390px] lg:h-[430px]">
+                                        <p className="mt-1 whitespace-nowrap text-[10px] text-slate-400 sm:text-xs">
+                                            hiring
+                                        </p>
+                                    </div>
+                                </div>
 
-                                {/* Loading skeleton */}
+                            </motion.div>
+
+                        </motion.div>
+
+                        {/* =====================================================
+                RIGHT VISUAL
+            ===================================================== */}
+                        <div className="relative flex min-h-[420px] items-center justify-center sm:min-h-[500px] lg:min-h-[560px]">
+
+                            {/* =================================================
+                    OUTER CIRCLE
+                ================================================= */}
+                            <motion.div
+                                animate={{
+                                    scale: [1, 1.025, 1],
+                                    rotate: [0, 3, 0],
+                                }}
+                                transition={{
+                                    duration: 8,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                }}
+                                className="absolute h-[360px] w-[360px] rounded-full border border-blue-100/60 bg-linear-to-br from-blue-50 via-blue-100/50 to-indigo-100/30 sm:h-[460px] sm:w-[460px] lg:h-[520px] lg:w-[520px]"
+                            />
+
+                            {/* =================================================
+                    INNER CIRCLE
+                ================================================= */}
+                            <motion.div
+                                animate={{
+                                    scale: [1, 1.05, 1],
+                                    opacity: [0.4, 0.8, 0.4],
+                                    rotate: [0, -5, 0],
+                                }}
+                                transition={{
+                                    duration: 6,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                }}
+                                className="absolute h-[270px] w-[270px] rounded-full border border-blue-200/50 sm:h-[350px] sm:w-[350px] lg:h-[410px] lg:w-[410px]"
+                            />
+
+                            {/* =================================================
+                    ORBIT DOTS
+                ================================================= */}
+                            {/* <motion.div
+                    animate={{
+                        rotate: 360,
+                    }}
+                    transition={{
+                        duration: 18,
+                        repeat: Infinity,
+                        ease: "linear",
+                    }}
+                    className="absolute h-[390px] w-[390px] rounded-full sm:h-[500px] sm:w-[500px] lg:h-[550px] lg:w-[550px]"
+                >
+                    <motion.div
+                        animate={{
+                            scale: [1, 1.5, 1],
+                            opacity: [0.4, 1, 0.4],
+                        }}
+                        transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                        }}
+                        className="absolute right-[8%] top-[13%] h-3 w-3 rounded-full bg-blue-500 shadow-lg shadow-blue-400/40"
+                    />
+                </motion.div> */}
+
+                            {/* =================================================
+                    TALENT CARDS
+                ================================================= */}
+                            <div className="relative h-[440px] w-full max-w-[590px] sm:h-[500px]">
+
+                                {/* Loading State */}
                                 {heroTalentsLoading ? (
                                     <>
-                                        <div className="absolute left-0 sm:left-3 top-1/2 -translate-y-1/2 -rotate-6 w-32 sm:w-40 lg:w-44 h-56 sm:h-64 lg:h-72 rounded-[28px] bg-blue-100 animate-pulse" />
+                                        <motion.div
+                                            animate={{
+                                                y: [0, -8, 0],
+                                                rotate: [-8, -6, -8],
+                                            }}
+                                            transition={{
+                                                duration: 3.5,
+                                                repeat: Infinity,
+                                                ease: "easeInOut",
+                                            }}
+                                            className="absolute left-[3%] top-1/2 h-56 w-36 -translate-y-1/2 -rotate-8 rounded-[30px] bg-blue-100 shadow-xl sm:h-72 sm:w-44"
+                                        />
 
-                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-40 sm:w-48 lg:w-56 h-64 sm:h-72 lg:h-80 rounded-[30px] bg-blue-100 animate-pulse" />
+                                        <motion.div
+                                            animate={{
+                                                y: [0, -12, 0],
+                                                scale: [1, 1.015, 1],
+                                            }}
+                                            transition={{
+                                                duration: 3,
+                                                repeat: Infinity,
+                                                ease: "easeInOut",
+                                            }}
+                                            className="absolute left-1/2 top-1/2 z-20 h-72 w-44 -translate-x-1/2 -translate-y-1/2 rounded-[34px] bg-blue-100 shadow-2xl sm:h-[360px] sm:w-56"
+                                        />
 
-                                        <div className="absolute right-0 sm:right-3 top-1/2 -translate-y-1/2 rotate-6 w-32 sm:w-40 lg:w-44 h-56 sm:h-64 lg:h-72 rounded-[28px] bg-blue-100 animate-pulse" />
+                                        <motion.div
+                                            animate={{
+                                                y: [0, 8, 0],
+                                                rotate: [8, 6, 8],
+                                            }}
+                                            transition={{
+                                                duration: 4,
+                                                repeat: Infinity,
+                                                ease: "easeInOut",
+                                            }}
+                                            className="absolute right-[3%] top-1/2 h-56 w-36 -translate-y-1/2 rotate-8 rounded-[30px] bg-blue-100 shadow-xl sm:h-72 sm:w-44"
+                                        />
                                     </>
                                 ) : heroTalents.length > 0 ? (
 
-                                    heroTalents.map((talent, index) => {
+                                    heroTalents.slice(0, 3).map((talent, index) => {
 
                                         const positionClasses = [
-                                            // Left
-                                            "left-0 sm:left-3 top-1/2 -translate-y-1/2 -rotate-6 w-32 sm:w-40 lg:w-44 h-56 sm:h-64 lg:h-72 z-10",
+                                            // LEFT
+                                            "left-[2%] sm:left-[4%] top-1/2 -translate-y-1/2 -rotate-8 w-36 sm:w-44 lg:w-48 h-56 sm:h-72 lg:h-[310px] z-10",
 
-                                            // Center
-                                            "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-40 sm:w-48 lg:w-56 h-64 sm:h-72 lg:h-80 z-20",
+                                            // CENTER
+                                            "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-44 sm:w-56 lg:w-[250px] h-72 sm:h-[360px] lg:h-[410px] z-30",
 
-                                            // Right
-                                            "right-0 sm:right-3 top-1/2 -translate-y-1/2 rotate-6 w-32 sm:w-40 lg:w-44 h-56 sm:h-64 lg:h-72 z-10",
+                                            // RIGHT
+                                            "right-[2%] sm:right-[4%] top-1/2 -translate-y-1/2 rotate-8 w-36 sm:w-44 lg:w-48 h-56 sm:h-72 lg:h-[310px] z-10",
                                         ];
 
                                         return (
-                                            <div
+                                            <motion.div
                                                 key={talent._id || index}
-                                                className={`absolute ${positionClasses[index]} rounded-[28px] overflow-hidden border-4 border-white shadow-2xl bg-blue-50 transition-transform duration-300 hover:scale-[1.03] cursor-pointer`}
-                                                onClick={() => navigate(`/talents/${talent._id}`)}
+                                                onClick={() =>
+                                                    navigate(`/talents/${talent._id}`)
+                                                }
+
+                                                /* Entrance */
+                                                initial={{
+                                                    opacity: 0,
+                                                    x:
+                                                        index === 0
+                                                            ? -100
+                                                            : index === 2
+                                                                ? 100
+                                                                : 0,
+                                                    y: 80,
+                                                    scale:
+                                                        index === 1
+                                                            ? 0.8
+                                                            : 0.88,
+                                                }}
+
+                                                animate={{
+                                                    opacity: 1,
+                                                    x: 0,
+                                                    y: [0, -10, 0],
+                                                    scale: 1,
+                                                }}
+
+                                                transition={{
+                                                    opacity: {
+                                                        duration: 0.8,
+                                                        delay:
+                                                            0.45 +
+                                                            index * 0.18,
+                                                    },
+
+                                                    x: {
+                                                        duration: 0.9,
+                                                        delay:
+                                                            0.45 +
+                                                            index * 0.18,
+                                                        ease: [
+                                                            0.22,
+                                                            1,
+                                                            0.36,
+                                                            1,
+                                                        ],
+                                                    },
+
+                                                    y: {
+                                                        duration:
+                                                            4 + index * 0.7,
+                                                        repeat: Infinity,
+                                                        ease: "easeInOut",
+                                                        delay:
+                                                            1.5 +
+                                                            index * 0.3,
+                                                    },
+
+                                                    scale: {
+                                                        duration: 0.9,
+                                                        delay:
+                                                            0.45 +
+                                                            index * 0.18,
+                                                        ease: [
+                                                            0.22,
+                                                            1,
+                                                            0.36,
+                                                            1,
+                                                        ],
+                                                    },
+                                                }}
+
+                                                whileHover={{
+                                                    scale: 1.05,
+                                                    y: -16,
+                                                    zIndex: 50,
+                                                }}
+
+                                                className={`absolute ${positionClasses[index]} group cursor-pointer overflow-hidden rounded-[30px] border-[5px] border-white bg-slate-100 shadow-[0_25px_60px_-15px_rgba(37,99,235,0.30)]`}
                                             >
+
+                                                {/* Image */}
                                                 <img
                                                     src={
                                                         talent.profileImage?.url
                                                     }
                                                     alt={
-                                                        talent.name || "Talent"
+                                                        talent.name ||
+                                                        "Talent"
                                                     }
-                                                    className="w-full h-full object-cover object-top"
+                                                    className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
                                                     onError={(e) => {
-                                                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                                        e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
                                                             talent.name ||
                                                             "Talent"
                                                         )}&background=2C78FF&color=fff&size=500`;
                                                     }}
                                                 />
-                                            </div>
+
+                                                {/* Image shine */}
+                                                <motion.div
+                                                    initial={{
+                                                        x: "-120%",
+                                                    }}
+                                                    animate={{
+                                                        x: "120%",
+                                                    }}
+                                                    transition={{
+                                                        duration: 2,
+                                                        repeat: Infinity,
+                                                        repeatDelay:
+                                                            4 + index,
+                                                        ease: "easeInOut",
+                                                    }}
+                                                    className="absolute inset-y-0 -left-1/2 w-1/2 skew-x-[-20deg] bg-linear-to-r from-transparent via-white/25 to-transparent"
+                                                />
+
+                                                {/* Gradient */}
+                                                <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-slate-950/10 to-transparent" />
+
+                                                {/* Talent Info */}
+                                                <motion.div
+                                                    initial={{
+                                                        opacity: 0,
+                                                        y: 20,
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        y: 0,
+                                                    }}
+                                                    transition={{
+                                                        delay:
+                                                            1 +
+                                                            index * 0.2,
+                                                        duration: 0.6,
+                                                    }}
+                                                    className="absolute bottom-0 left-0 right-0 p-4 sm:p-5"
+                                                >
+                                                    <div className="mb-1 flex items-center gap-1.5">
+                                                        <HiCheckBadge
+                                                            size={16}
+                                                            className="text-blue-400"
+                                                        />
+
+                                                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/80">
+                                                            Verified Talent
+                                                        </span>
+                                                    </div>
+
+                                                    <h3 className="truncate text-sm font-bold text-white sm:text-base">
+                                                        {talent.name ||
+                                                            "Talent"}
+                                                    </h3>
+
+                                                    <p className="mt-0.5 text-xs text-white/70">
+                                                        {talent.categories?.[0]
+                                                            ?.name ||
+                                                            "Professional Talent"}
+                                                    </p>
+                                                </motion.div>
+
+                                                {/* Hover glow */}
+                                                <div className="pointer-events-none absolute inset-0 rounded-[26px] ring-1 ring-white/0 transition-all duration-500 group-hover:ring-4 group-hover:ring-blue-400/30" />
+
+                                            </motion.div>
                                         );
                                     })
 
                                 ) : (
 
-                                    /* No talent data */
+                                    /* Empty State */
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="w-56 h-72 rounded-[30px] bg-blue-50 flex items-center justify-center text-gray-400 text-sm">
-                                            No talents available
-                                        </div>
-                                    </div>
+                                        <motion.div
+                                            animate={{
+                                                y: [0, -8, 0],
+                                            }}
+                                            transition={{
+                                                duration: 3,
+                                                repeat: Infinity,
+                                                ease: "easeInOut",
+                                            }}
+                                            className="flex h-72 w-56 flex-col items-center justify-center rounded-[30px] border border-blue-100 bg-blue-50 text-slate-400 shadow-xl"
+                                        >
+                                            <FiUsers
+                                                size={30}
+                                                className="mb-3 text-blue-300"
+                                            />
 
+                                            <span className="text-sm">
+                                                No talents available
+                                            </span>
+                                        </motion.div>
+                                    </div>
                                 )}
 
+                                {/* =================================================
+                        FLOATING VERIFIED CARD
+                    ================================================= */}
+                                {/* <motion.div
+                                    initial={{
+                                        opacity: 0,
+                                        x: -30,
+                                        y: 20,
+                                    }}
+                                    animate={{
+                                        opacity: 1,
+                                        x: 0,
+                                        y: [0, -7, 0],
+                                    }}
+                                    transition={{
+                                        opacity: {
+                                            duration: 0.7,
+                                            delay: 1.3,
+                                        },
+                                        x: {
+                                            duration: 0.7,
+                                            delay: 1.3,
+                                        },
+                                        y: {
+                                            duration: 4,
+                                            repeat: Infinity,
+                                            ease: "easeInOut",
+                                            delay: 2,
+                                        },
+                                    }}
+                                    className="absolute left-0 top-[8%] z-40 sm:left-2"
+                                > */}
+                                    <div className="absolute left-0 top-[8%] z-40 sm:left-2 flex items-center gap-2.5 rounded-2xl border border-white bg-white/95 px-3.5 py-2.5 shadow-xl shadow-blue-900/10 backdrop-blur-md">
+
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                                            <HiCheckBadge size={18} />
+                                        </div>
+
+                                        <div>
+                                            <p className="text-[10px] font-medium text-slate-400">
+                                                Profiles
+                                            </p>
+
+                                            <p className="text-xs font-bold text-slate-800">
+                                                Verified & Trusted
+                                            </p>
+                                        </div>
+
+                                    </div>
+                                {/* </motion.div> */}
+
+                                {/* =================================================
+                        FLOATING TALENT COUNT CARD
+                    ================================================= */}
+                                {/* <motion.div
+                                    initial={{
+                                        opacity: 0,
+                                        x: 30,
+                                        y: 20,
+                                    }}
+                                    animate={{
+                                        opacity: 1,
+                                        x: 0,
+                                        y: [0, 7, 0],
+                                    }}
+                                    transition={{
+                                        opacity: {
+                                            duration: 0.7,
+                                            delay: 1.6,
+                                        },
+                                        x: {
+                                            duration: 0.7,
+                                            delay: 1.6,
+                                        },
+                                        y: {
+                                            duration: 4.5,
+                                            repeat: Infinity,
+                                            ease: "easeInOut",
+                                            delay: 2.2,
+                                        },
+                                    }}
+                                    className="absolute bottom-[8%] right-0 z-40 sm:right-1"
+                                > */}
+                                    <div className="absolute bottom-[8%] right-0 z-40 sm:right-1 flex items-center gap-2.5 rounded-2xl border border-white bg-white/95 px-3.5 py-2.5 shadow-xl shadow-blue-900/10 backdrop-blur-md">
+
+                                        {/* Mini avatars */}
+                                        <div className="flex -space-x-2">
+                                            {heroTalents
+                                                .slice(0, 3)
+                                                .map((talent, index) => (
+                                                    <motion.div
+                                                        key={
+                                                            talent._id ||
+                                                            index
+                                                        }
+                                                        whileHover={{
+                                                            scale: 1.15,
+                                                            zIndex: 20,
+                                                        }}
+                                                        className="h-8 w-8 overflow-hidden rounded-full border-2 border-white bg-blue-100"
+                                                    >
+                                                        <img
+                                                            src={
+                                                                talent
+                                                                    .profileImage
+                                                                    ?.url
+                                                            }
+                                                            alt=""
+                                                            className="h-full w-full object-cover"
+                                                        />
+                                                    </motion.div>
+                                                ))}
+                                        </div>
+
+                                        <div>
+                                            <p className="text-xs font-bold text-slate-800">
+                                                100+ Talents
+                                            </p>
+
+                                            <p className="text-[10px] text-slate-400">
+                                                Ready to work
+                                            </p>
+                                        </div>
+
+                                    </div>
+                                {/* </motion.div> */}
+
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
-                {/* Decorative blobs */}
-                <div className="absolute top-10 right-1/3 w-72 h-72 bg-blue-100/40 rounded-full blur-3xl pointer-events-none"></div>
-
-                <div className="absolute bottom-0 left-10 w-48 h-48 bg-indigo-100/30 rounded-full blur-2xl pointer-events-none"></div>
-
             </section>
 
-            {/* ── SEARCH BAR ─────────────────────────────────────────────── */}
-            <section className="max-w-7xl mx-auto px-6 py-6">
+            <section className="max-w-7xl mx-auto px-6">
 
                 <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-2 flex flex-col md:flex-row items-center gap-2">
 
@@ -309,6 +994,7 @@ function HomePage() {
                             type="text"
                             placeholder="Search talents..."
                             value={searchQuery}
+
                             onChange={(e) =>
                                 setSearchQuery(e.target.value)
                             }

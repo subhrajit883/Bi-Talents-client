@@ -17,6 +17,7 @@ import {
     FiVideo,
 } from "react-icons/fi";
 import { talentUrl, categoryUrl, apiClient } from "../config/config";
+import DeleteModal from "../components/common/DeleteModal";
 
 const DEFAULT_PROFILE =
     "data:image/svg+xml;utf8," +
@@ -138,28 +139,28 @@ const AdminAllTalents = () => {
               )?.name || "All Categories";
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 px-6 py-8 lg:px-10 lg:py-10">
-            <div className="max-w-[1400px] mx-auto">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 px-6 py-8 lg:px-10 lg:py-10">
+            <div className="max-w-350 mx-auto">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                     <div>
-                        <div className="flex items-center gap-2 mb-2">
+                        {/* <div className="flex items-center gap-2 mb-2">
                             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 text-blue-700 text-xs font-semibold border border-blue-200/50">
                                 <FiUsers size={12} />
                                 Talent Directory
                             </span>
-                        </div>
-                        <h1 className="text-3xl lg:text-4xl font-bold tracking-tight  bg-clip-text text-transparent">
+                        </div> */}
+                        <h1 className="text-3xl lg:text-4xl font-bold tracking-tight bg-linear-to-r from-blue-500 via-blue-600 to-blue-700 bg-clip-text text-transparent">
                             All Candidates
                         </h1>
-                        <p className="text-slate-500 text-sm mt-2">
+                        <p className="text-slate-500 text-sm mt-2">                         
                             {meta.total} candidate
                             {meta.total !== 1 && "s"} registered
                         </p>
                     </div>
                     <Link
                         to="/admin/candidates"
-                        className="sm:self-start sm:mt-2 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-700 hover:to-blue-700 text-white font-semibold text-sm shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:-translate-y-0.5 transition-all"
+                        className="sm:self-start sm:mt-2 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-linear-to-r from-blue-400 to-blue-600 hover:from-blue-700 hover:to-blue-700 text-white font-semibold text-sm shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:-translate-y-0.5 transition-all"
                     >
                         <FiPlus size={17} />
                         Add Candidate
@@ -167,7 +168,7 @@ const AdminAllTalents = () => {
                 </div>
 
                 {/* Filters */}
-                <div className="bg-white/80 backdrop-blur rounded-3xl border border-white shadow-xl shadow-slate-200/60 p-5 mb-6">
+                <div className="relative z-20  bg-white/80 backdrop-blur  rounded-3xl border border-white shadow-xl shadow-slate-200/60 p-5 mb-6">
                     <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-3 items-end">
                         {/* Search */}
                         <div className="relative">
@@ -239,7 +240,7 @@ const AdminAllTalents = () => {
                                 </span>
                             </button>
                             {showCatDropdown && (
-                                <div className="absolute right-0 z-50 mt-2 w-full md:w-[280px] rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-300/40 py-2 overflow-hidden">
+                                <div className="absolute right-0 mt-2 w-full md:w-[280px] rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-300/40 py-2 ">
                                     <ul className="max-h-72 overflow-y-auto">
                                         <li>
                                             <button
@@ -306,14 +307,14 @@ const AdminAllTalents = () => {
                         </div>
 
                         {/* Visual Filter icon */}
-                        <button
+                        {/* <button
                             type="button"
                             onClick={fetchTalents}
                             className="h-[50px] px-4 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-blue-400 text-slate-500 hover:text-blue-600 flex items-center justify-center transition-all shadow-sm"
                             title="Refresh"
                         >
                             <FiFilter size={17} />
-                        </button>
+                        </button> */}
                     </div>
 
                     {/* Result strip */}
@@ -435,7 +436,10 @@ const AdminAllTalents = () => {
             {/* Delete Confirmation Modal */}
             {confirmDelete && (
                 <DeleteModal
-                    talent={confirmDelete}
+                    title="Delete Candidate?"
+                    item={confirmDelete}
+                    itemNameKey="name"
+                    itemIdentifierKey="c_id"
                     onCancel={() => setConfirmDelete(null)}
                     onConfirm={() => handleDelete(confirmDelete)}
                     deleting={deletingId === confirmDelete._id}
@@ -662,76 +666,6 @@ const SkeletonRow = () => (
             </div>
         </td>
     </tr>
-);
-
-/* ============ Delete Confirm Modal ============ */
-const DeleteModal = ({ talent, onCancel, onConfirm, deleting }) => (
-    <div className="fixed inset-0  flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-[fadeIn_0.15s_ease-out]">
-        <div className="w-full max-w-md rounded-3xl bg-white shadow-2xl overflow-hidden animate-[popIn_0.2s_ease-out]">
-            <div className="px-8 pt-8 pb-6 text-center">
-                <div className="mx-auto mb-5 w-16 h-16 rounded-2xl bg-gradient-to-br from-red-50 to-rose-100 flex items-center justify-center text-red-500 shadow-inner">
-                    <FiTrash2 size={26} />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">
-                    Delete Candidate?
-                </h3>
-                <p className="text-sm text-slate-500 max-w-xs mx-auto leading-relaxed">
-                    You are about to permanently delete{" "}
-                    <span className="font-semibold text-slate-800">
-                        {talent.name}
-                    </span>{" "}
-                    ({talent.c_id || ""}). This cannot be undone.
-                </p>
-            </div>
-            <div className="px-8 pb-8 flex items-center justify-end gap-3 bg-slate-50/60 pt-5 border-t border-slate-100">
-                <button
-                    type="button"
-                    onClick={onCancel}
-                    disabled={deleting}
-                    className="px-5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-sm font-semibold hover:bg-slate-50 disabled:opacity-60 transition-all"
-                >
-                    Cancel
-                </button>
-                <button
-                    type="button"
-                    onClick={onConfirm}
-                    disabled={deleting}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white text-sm font-semibold shadow-lg shadow-red-500/30 hover:shadow-xl disabled:opacity-70 transition-all"
-                >
-                    {deleting ? (
-                        <>
-                            <svg
-                                className="animate-spin w-4 h-4"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                            >
-                                <circle
-                                    className="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    strokeWidth="4"
-                                />
-                                <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                                />
-                            </svg>
-                            Deleting...
-                        </>
-                    ) : (
-                        <>
-                            <FiTrash2 size={14} />
-                            Delete
-                        </>
-                    )}
-                </button>
-            </div>
-        </div>
-    </div>
 );
 
 export default AdminAllTalents;

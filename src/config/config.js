@@ -34,6 +34,17 @@ apiClient.interceptors.request.use((config) => {
 
 export const categoryUrl = {
     getAll: `${BASE_URL}/categories`,
+    create: `${BASE_URL}/categories`,
+    update: `${BASE_URL}/categories/`,
+    delete: `${BASE_URL}/categories/`,
+};
+
+export const clientUrl = {
+    getAll: `${BASE_URL}/clients`,
+
+};
+export const clientInterestUrl = {
+    getAll: `${BASE_URL}/interests`,
 };
 
 export const talentUrl = {
