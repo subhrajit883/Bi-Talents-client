@@ -19,7 +19,7 @@ import { categoryUrl, talentUrl } from "../config/config";
 import coverImage from "../assets/cat.jpg";
 const CategoryPage = () => {
 
-   
+
     const { id: categorySlug } = useParams();
     const navigate = useNavigate();
 
@@ -41,13 +41,27 @@ const CategoryPage = () => {
             const allCategories = (catRes.data.categories || []).filter(
                 (c) => c.isActive
             );
-            setCategories(allCategories);
 
-            const matchedCategory =
-                allCategories.find((c) => c.slug === categorySlug) ||
-                allCategories[0];
-            setActiveCategory(matchedCategory);
+            const recommendedCategoryObj = {
+                _id: "recommended",
+                name: "Our Recommendation",
+                slug: "recommended",
+                isActive: true,
+            };
 
+            const fullCategories = [recommendedCategoryObj, ...allCategories];
+            setCategories(fullCategories);
+
+            // Fetch recommended talents
+            let recTalents = [];
+            try {
+                const recRes = await axios.get(talentUrl.recommended);
+                recTalents = recRes.data?.talents || [];
+            } catch (err) {
+                console.error("Failed to fetch recommended talents:", err);
+            }
+
+            // Fetch counts for all standard categories
             const countPromises = allCategories.map(async (category) => {
                 try {
                     const res = await axios.get(
@@ -64,17 +78,31 @@ const CategoryPage = () => {
             });
 
             const countResults = await Promise.all(countPromises);
-            const counts = {};
+            const counts = { recommended: recTalents.length };
             countResults.forEach((r) => {
                 counts[r.slug] = r.count;
             });
             setAllCategoryCounts(counts);
 
-            if (matchedCategory) {
-                const talentRes = await axios.get(
-                    `${talentUrl.catWise}/${matchedCategory._id}`
-                );
-                setCategoryTalents(talentRes.data.talents || []);
+            if (categorySlug === "recommended") {
+                setActiveCategory(recommendedCategoryObj);
+                setCategoryTalents(recTalents);
+            } else {
+                const matchedCategory =
+                    allCategories.find((c) => c.slug === categorySlug) ||
+                    allCategories[0] ||
+                    recommendedCategoryObj;
+
+                setActiveCategory(matchedCategory);
+
+                if (matchedCategory && matchedCategory._id === "recommended") {
+                    setCategoryTalents(recTalents);
+                } else if (matchedCategory) {
+                    const talentRes = await axios.get(
+                        `${talentUrl.catWise}/${matchedCategory._id}`
+                    );
+                    setCategoryTalents(talentRes.data.talents || []);
+                }
             }
         } catch (err) {
             console.error("Failed to fetch category data:", err);
@@ -145,193 +173,193 @@ const CategoryPage = () => {
             {/* =========================================================
                 HERO SECTION
             ========================================================= */}
-<section
-    className="relative overflow-hidden min-h-[460px] flex items-center"
-    style={{
-        backgroundImage: `url(${coverImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-    }}
->
-    {/* Dark/white gradient overlay */}
-    <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/55 to-white/35" />
+            <section
+                className="relative overflow-hidden min-h-[460px] flex items-center"
+                style={{
+                    backgroundImage: `url(${coverImage})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                }}
+            >
+                {/* Dark/white gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/55 to-white/35" />
 
-    {/* Blue atmospheric overlay */}
-    <div className="absolute inset-0 bg-gradient-to-br from-blue-50/80 via-transparent to-[#2C78FF]/10" />
+                {/* Blue atmospheric overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50/80 via-transparent to-[#2C78FF]/10" />
 
-    {/* Decorative blur */}
-    <div className="absolute -right-32 -top-32 w-[450px] h-[450px] rounded-full bg-[#2C78FF]/10 blur-3xl pointer-events-none" />
+                {/* Decorative blur */}
+                <div className="absolute -right-32 -top-32 w-[450px] h-[450px] rounded-full bg-[#2C78FF]/10 blur-3xl pointer-events-none" />
 
-    <div className="relative z-10 max-w-7xl mx-auto w-full px-6 py-14 lg:py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                <div className="relative z-10 max-w-7xl mx-auto w-full px-6 py-14 lg:py-20">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
 
-            {/* LEFT CONTENT */}
-            <div className="space-y-6">
+                        {/* LEFT CONTENT */}
+                        <div className="space-y-6">
 
-                {/* Category badge */}
-                <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-md border border-blue-100 rounded-full px-4 py-2 shadow-sm">
-                    <FiUsers
-                        size={15}
-                        className="text-[#2C78FF]"
-                    />
+                            {/* Category badge */}
+                            <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-md border border-blue-100 rounded-full px-4 py-2 shadow-sm">
+                                <FiUsers
+                                    size={15}
+                                    className="text-[#2C78FF]"
+                                />
 
-                    <span className="text-sm font-semibold text-[#2C78FF]">
-                        Talent Category
-                    </span>
-                </div>
+                                <span className="text-sm font-semibold text-[#2C78FF]">
+                                    Talent Category
+                                </span>
+                            </div>
 
-                {/* Heading */}
-                <div>
-                    <h1 className="text-3xl sm:text-3xl lg:text-5xl font-bold tracking-tight text-slate-950 leading-[1.05]">
-                        {categoryName}
-                    </h1>
+                            {/* Heading */}
+                            <div>
+                                <h1 className="text-3xl sm:text-3xl lg:text-5xl font-bold tracking-tight text-slate-950 leading-[1.05]">
+                                    {categoryName}
+                                </h1>
 
-                    <div className="mt-4 w-16 h-1 rounded-full bg-[#2C78FF]" />
-                </div>
+                                <div className="mt-4 w-16 h-1 rounded-full bg-[#2C78FF]" />
+                            </div>
 
-                {/* Description */}
-                <p className="text-slate-600 text-base lg:text-lg leading-relaxed max-w-xl">
-                    Discover talented{" "}
-                    {categoryName.toLowerCase()} for your brand,
-                    campaign, photoshoot or event. Find the perfect
-                    face for your vision.
-                </p>
+                            {/* Description */}
+                            <p className="text-slate-600 text-base lg:text-lg leading-relaxed max-w-xl">
+                                Discover talented{" "}
+                                {categoryName.toLowerCase()} for your brand,
+                                campaign, photoshoot or event. Find the perfect
+                                face for your vision.
+                            </p>
 
-                {/* Statistics */}
-                <div className="flex flex-wrap gap-3 pt-2">
+                            {/* Statistics */}
+                            <div className="flex flex-wrap gap-3 pt-2">
 
-                    {/* Talents */}
-                    <div className="flex items-center gap-3 bg-white/85 backdrop-blur-md border border-white rounded-2xl px-4 py-3 shadow-sm">
-                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#2C78FF] flex items-center justify-center">
-                            <FiUsers size={19} />
+                                {/* Talents */}
+                                <div className="flex items-center gap-3 bg-white/85 backdrop-blur-md border border-white rounded-2xl px-4 py-3 shadow-sm">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#2C78FF] flex items-center justify-center">
+                                        <FiUsers size={19} />
+                                    </div>
+
+                                    <div>
+                                        <p className=" text-slate-900 text-lg leading-none font-bold">
+                                            {talentCount}+
+                                        </p>
+
+                                        <p className="text-slate-400 text-xs mt-1">
+                                            Talents Available
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Categories */}
+                                <div className="flex items-center gap-3 bg-white/85 backdrop-blur-md border border-white rounded-2xl px-4 py-3 shadow-sm">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#2C78FF] flex items-center justify-center">
+                                        <FiBriefcase size={19} />
+                                    </div>
+
+                                    <div>
+                                        <p className=" text-slate-900 text-lg leading-none font-bold">
+                                            {categories.length}
+                                        </p>
+
+                                        <p className="text-slate-400 text-xs mt-1">
+                                            Categories
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Verified */}
+                                <div className="flex items-center gap-3 bg-white/85 backdrop-blur-md border border-white rounded-2xl px-4 py-3 shadow-sm">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#2C78FF] flex items-center justify-center">
+                                        <FiShield size={19} />
+                                    </div>
+
+                                    <div>
+                                        <p className=" text-slate-900 text-lg leading-none font-bold">
+                                            100%
+                                        </p>
+
+                                        <p className="text-slate-400 text-xs mt-1">
+                                            Verified Profiles
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
 
-                        <div>
-                            <p className=" text-slate-900 text-lg leading-none font-bold">
-                                {talentCount}+
-                            </p>
+                        {/* RIGHT SIDE */}
+                        <div className="relative hidden lg:flex justify-center items-center min-h-[340px]">
 
-                            <p className="text-slate-400 text-xs mt-1">
-                                Talents Available
-                            </p>
-                        </div>
-                    </div>
+                            {/* Soft glass panel */}
+                            {/* <div className="absolute w-[430px] h-[300px] rounded-[3rem] bg-white/20 backdrop-blur-[2px] border border-white/40 rotate-3" /> */}
 
-                    {/* Categories */}
-                    <div className="flex items-center gap-3 bg-white/85 backdrop-blur-md border border-white rounded-2xl px-4 py-3 shadow-sm">
-                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#2C78FF] flex items-center justify-center">
-                            <FiBriefcase size={19} />
-                        </div>
+                            {/* Main image */}
+                            {sortedTalents.length > 0 && (
+                                <div
+                                    className="relative z-20 w-[220px] h-[300px] rounded-[2rem] overflow-hidden border-[6px] border-white shadow-2xl -rotate-2"
+                                >
+                                    <img
+                                        src={sortedTalents[0]?.profileImage?.url}
+                                        alt={sortedTalents[0]?.name || "Talent"}
+                                        className="w-full h-full object-cover object-top"
+                                        onError={(e) => {
+                                            e.target.src =
+                                                `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                                    sortedTalents[0]?.name || "Talent"
+                                                )}&background=2C78FF&color=fff&size=500`;
+                                        }}
+                                    />
 
-                        <div>
-                            <p className=" text-slate-900 text-lg leading-none font-bold">
-                                {categories.length}
-                            </p>
 
-                            <p className="text-slate-400 text-xs mt-1">
-                                Categories
-                            </p>
-                        </div>
-                    </div>
+                                    <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/50 to-transparent" />
 
-                    {/* Verified */}
-                    <div className="flex items-center gap-3 bg-white/85 backdrop-blur-md border border-white rounded-2xl px-4 py-3 shadow-sm">
-                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#2C78FF] flex items-center justify-center">
-                            <FiShield size={19} />
-                        </div>
 
-                        <div>
-                            <p className=" text-slate-900 text-lg leading-none font-bold">  
-                                100%
-                            </p>
+                                    <div className="absolute bottom-4 left-4 right-4">
+                                        <p className="text-white text-sm font-bold">
+                                            {sortedTalents[0]?.name}
+                                        </p>
 
-                            <p className="text-slate-400 text-xs mt-1">
-                                Verified Profiles
-                            </p>
-                        </div>
-                    </div>
+                                        <p className="text-white/70 text-xs mt-0.5">
+                                            {categoryName}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
 
-                </div>
-            </div>
+                            {/* Secondary image 1 */}
+                            {sortedTalents[1] && (
+                                <div
+                                    className="absolute z-10 left-2 top-4 w-[125px] h-[165px] rounded-2xl overflow-hidden border-4 border-white shadow-xl -rotate-8"
+                                >
+                                    <img
+                                        src={sortedTalents[1]?.profileImage?.url}
+                                        alt={sortedTalents[1]?.name || "Talent"}
+                                        className="w-full h-full object-cover object-top"
+                                        onError={(e) => {
+                                            e.target.src =
+                                                `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                                    sortedTalents[1]?.name || "Talent"
+                                                )}&background=2C78FF&color=fff&size=300`;
+                                        }}
+                                    />
+                                </div>
+                            )}
 
-            {/* RIGHT SIDE */}
-            <div className="relative hidden lg:flex justify-center items-center min-h-[340px]">
 
-                {/* Soft glass panel */}
-                {/* <div className="absolute w-[430px] h-[300px] rounded-[3rem] bg-white/20 backdrop-blur-[2px] border border-white/40 rotate-3" /> */}
+                            {sortedTalents[2] && (
+                                <div
+                                    className="absolute z-30 right-0 top-0 w-[135px] h-[175px] rounded-2xl overflow-hidden border-4 border-white shadow-xl rotate-6"
+                                >
+                                    <img
+                                        src={sortedTalents[2]?.profileImage?.url}
+                                        alt={sortedTalents[2]?.name || "Talent"}
+                                        className="w-full h-full object-cover object-top"
+                                        onError={(e) => {
+                                            e.target.src =
+                                                `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                                    sortedTalents[2]?.name || "Talent"
+                                                )}&background=2C78FF&color=fff&size=300`;
+                                        }}
+                                    />
+                                </div>
+                            )}
 
-                {/* Main image */}
-                {sortedTalents.length > 0 && (
-                    <div
-                        className="relative z-20 w-[220px] h-[300px] rounded-[2rem] overflow-hidden border-[6px] border-white shadow-2xl -rotate-2"
-                    >
-                        <img
-                            src={sortedTalents[0]?.profileImage?.url}
-                            alt={sortedTalents[0]?.name || "Talent"}
-                            className="w-full h-full object-cover object-top"
-                            onError={(e) => {
-                                e.target.src =
-                                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                                        sortedTalents[0]?.name || "Talent"
-                                    )}&background=2C78FF&color=fff&size=500`;
-                            }}
-                        />
-
-                
-                        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/50 to-transparent" />
-
-                 
-                        <div className="absolute bottom-4 left-4 right-4">
-                            <p className="text-white text-sm font-bold">
-                                {sortedTalents[0]?.name}
-                            </p>
-
-                            <p className="text-white/70 text-xs mt-0.5">
-                                {categoryName}
-                            </p>
-                        </div>
-                    </div>
-                )}
-
-                {/* Secondary image 1 */}
-         {sortedTalents[1] && (
-                    <div
-                        className="absolute z-10 left-2 top-4 w-[125px] h-[165px] rounded-2xl overflow-hidden border-4 border-white shadow-xl -rotate-8"
-                    >
-                        <img
-                            src={sortedTalents[1]?.profileImage?.url}
-                            alt={sortedTalents[1]?.name || "Talent"}
-                            className="w-full h-full object-cover object-top"
-                            onError={(e) => {
-                                e.target.src =
-                                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                                        sortedTalents[1]?.name || "Talent"
-                                    )}&background=2C78FF&color=fff&size=300`;
-                            }}
-                        />
-                    </div>
-                )}
- 
-           
-                {sortedTalents[2] && (
-                    <div
-                        className="absolute z-30 right-0 top-0 w-[135px] h-[175px] rounded-2xl overflow-hidden border-4 border-white shadow-xl rotate-6"
-                    >
-                        <img
-                            src={sortedTalents[2]?.profileImage?.url}
-                            alt={sortedTalents[2]?.name || "Talent"}
-                            className="w-full h-full object-cover object-top"
-                            onError={(e) => {
-                                e.target.src =
-                                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                                        sortedTalents[2]?.name || "Talent"
-                                    )}&background=2C78FF&color=fff&size=300`;
-                            }}
-                        />
-                    </div>
-                )}
-
-                  {/* 
+                            {/* 
                 {sortedTalents[3] && (
                     <div
                         className="absolute z-30 right-8 bottom-0 w-[120px] h-[155px] rounded-2xl overflow-hidden border-4 border-white shadow-xl rotate-5"
@@ -350,8 +378,8 @@ const CategoryPage = () => {
                     </div>
                 )} */}
 
-                {/* Floating label */}
-                {/* <div className="absolute z-40 -right-2 bottom-7 bg-white/95 backdrop-blur-md rounded-2xl px-4 py-3 shadow-xl border border-white">
+                            {/* Floating label */}
+                            {/* <div className="absolute z-40 -right-2 bottom-7 bg-white/95 backdrop-blur-md rounded-2xl px-4 py-3 shadow-xl border border-white">
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
                             <FiShield
@@ -372,10 +400,10 @@ const CategoryPage = () => {
                     </div>
                 </div> */}
 
-            </div>
-        </div>
-    </div>
-</section>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             {/* =========================================================
                 MAIN CONTENT: SIDEBAR + TALENT GRID
@@ -411,11 +439,10 @@ const CategoryPage = () => {
                                                     category.slug
                                                 )
                                             }
-                                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
-                                                isActive
-                                                    ? "bg-blue-50 text-blue-600 font-semibold"
-                                                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                                            }`}
+                                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${isActive
+                                                ? "bg-blue-50 text-blue-600 font-semibold"
+                                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                                                }`}
                                         >
                                             <div className="flex items-center gap-2.5">
                                                 <FiUsers
@@ -429,11 +456,10 @@ const CategoryPage = () => {
                                                 <span>{category.name}</span>
                                             </div>
                                             <span
-                                                className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                                                    isActive
-                                                        ? "bg-blue-100 text-blue-600"
-                                                        : "bg-gray-100 text-gray-500"
-                                                }`}
+                                                className={`text-xs px-2 py-0.5 rounded-full font-medium ${isActive
+                                                    ? "bg-blue-100 text-blue-600"
+                                                    : "bg-gray-100 text-gray-500"
+                                                    }`}
                                             >
                                                 {count}
                                             </span>
@@ -448,7 +474,7 @@ const CategoryPage = () => {
                             <div className="absolute -top-4 -right-4 w-20 h-20 bg-blue-200/40 rounded-full blur-2xl" />
 
                             <div className="relative">
-                               
+
 
                                 <h4 className="font-bold text-gray-900 mb-1.5">
                                     Need a specific talent?
@@ -524,7 +550,7 @@ const CategoryPage = () => {
                             </div>
 
                             {/* Location Dropdown */}
-                            <div className="relative md:w-44">
+                            {/* <div className="relative md:w-44">
                                 <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-gray-50/60 border border-transparent hover:bg-gray-50 cursor-pointer transition-all">
                                     <FiMapPin
                                         size={16}
@@ -558,7 +584,7 @@ const CategoryPage = () => {
                                         className="text-gray-400 absolute right-3 pointer-events-none"
                                     />
                                 </div>
-                            </div>
+                            </div> */}
 
                             {/* Search Button */}
                             <button className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md shadow-blue-200 hover:shadow-lg whitespace-nowrap">
@@ -604,22 +630,20 @@ const CategoryPage = () => {
                                 <div className="flex items-center bg-white border border-gray-100 rounded-xl shadow-sm p-0.5">
                                     <button
                                         onClick={() => setViewMode("grid")}
-                                        className={`p-1.5 rounded-lg transition-all ${
-                                            viewMode === "grid"
-                                                ? "bg-blue-600 text-white shadow-sm"
-                                                : "text-gray-400 hover:text-gray-600"
-                                        }`}
+                                        className={`p-1.5 rounded-lg transition-all ${viewMode === "grid"
+                                            ? "bg-blue-600 text-white shadow-sm"
+                                            : "text-gray-400 hover:text-gray-600"
+                                            }`}
                                         title="Grid view"
                                     >
                                         <FiGrid size={16} />
                                     </button>
                                     <button
                                         onClick={() => setViewMode("list")}
-                                        className={`p-1.5 rounded-lg transition-all ${
-                                            viewMode === "list"
-                                                ? "bg-blue-600 text-white shadow-sm"
-                                                : "text-gray-400 hover:text-gray-600"
-                                        }`}
+                                        className={`p-1.5 rounded-lg transition-all ${viewMode === "list"
+                                            ? "bg-blue-600 text-white shadow-sm"
+                                            : "text-gray-400 hover:text-gray-600"
+                                            }`}
                                         title="List view"
                                     >
                                         <FiList size={16} />
@@ -663,11 +687,10 @@ const CategoryPage = () => {
                             </div>
                         ) : (
                             <div
-                                className={`grid gap-5 ${
-                                    viewMode === "grid"
-                                        ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                                        : "grid-cols-1 md:grid-cols-2"
-                                }`}
+                                className={`grid gap-5 ${viewMode === "grid"
+                                    ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                                    : "grid-cols-1 md:grid-cols-2"
+                                    }`}
                             >
                                 {sortedTalents.map((talent) => {
                                     const catName =
@@ -694,7 +717,7 @@ const CategoryPage = () => {
                                                     onError={(e) => {
                                                         e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
                                                             talent.name ||
-                                                                "Talent"
+                                                            "Talent"
                                                         )}&background=2C78FF&color=fff&size=500`;
                                                     }}
                                                 />
@@ -727,16 +750,16 @@ const CategoryPage = () => {
                                                 </h3>
 
                                                 <p className="text-xs text-gray-500 mb-2.5">
-                                                    {talent.age} Years ·{" "}
-                                                    {talent.works[0] || "Talent"}
+                                                    {talent.age} Years
+                                                    {/* {talent.works[0] || "Talent"} */}
                                                 </p>
-
-                                                <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-3.5">
+                                                {/* 
+                                                <div className="flex items-cnter gap-1.5 text-xs text-gray-400 mb-3.5">
                                                     <FiMapPin size={12} />
                                                     <span className="truncate">
                                                         {talent.address}
                                                     </span>
-                                                </div>
+                                                </div> */}
 
                                                 {/* Hire Button */}
                                                 <button

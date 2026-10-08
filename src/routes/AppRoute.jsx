@@ -24,6 +24,13 @@ import NotFound from "../pages/NotFound";
 import ClientProtectedRoute from "./ClientProtectedRoute";
 import ClientInterests from "../pages/ClientInterests";
 import SearchedPage from "../pages/SearchedPage";
+import ClientRegister from "../pages/ClientRegister";
+import ClientLogin from "../pages/ClientLogin";
+import AboutPage from "../pages/AboutPage";
+import TalentEnquiryForm from "../pages/TalentEnquiryForm";
+import AdminTalentEnquiries from "../pages/AdminTalentEnquiries";
+import ForgotPassword from "../pages/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword";
 
 
 const AppRoute = () => {
@@ -35,22 +42,29 @@ const AppRoute = () => {
                     <Route path="/talents/:id" element={<TalentDetails />} />
                     <Route path="/category/:id" element={<CategoryPage />} />
                     <Route path="/search" element={<SearchedPage />} />
+                    <Route path="/register" element={<ClientRegister />} />
+                    <Route path="/login" element={<ClientLogin />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/about" element={<AboutPage />} />
+                    <Route path="/talent-enquiry" element={<TalentEnquiryForm />} />
                 </Route>
                 <Route path="/adminlogin" element={<AdminLogin />} />
+
 
                 <Route element={<AdminLayout />}>
                     <Route
                         path="/admin"
-                        element={<Navigate to="/admin/dashboard" replace />}
+                        element={<Navigate to="/admin/allcandidates" replace />}
                     />
-                    <Route
+                    {/* <Route
                         path="/admin/dashboard"
                         element={
                             <ProtectedRoute>
                                 <AdminDashboard />
                             </ProtectedRoute>
                         }
-                    />
+                    /> */}
                     <Route
                         path="/admin/candidates"
                         element={
@@ -91,16 +105,24 @@ const AppRoute = () => {
                             </ProtectedRoute>
                         }
                     />
+                    <Route
+                        path="/admin/talent-enquiries"
+                        element={
+                            <ProtectedRoute>
+                                <AdminTalentEnquiries />
+                            </ProtectedRoute>
+                        }
+                    />
                 </Route>
 
-       <Route path="/login" element={<AdminLogin />} />
+                {/* <Route path="/login" element={<AdminLogin />} /> */}
                 <Route element={<ClientLayout />}>
-                    <Route path="/client/dashboard" element={
+                    <Route path="/dashboard" element={
                         <ClientProtectedRoute>
                             <ClientDashboard />
                         </ClientProtectedRoute>
                     } />
-                    <Route path="/client/interests" element={
+                    <Route path="/interests" element={
                         <ClientProtectedRoute>
                             <ClientInterests />
                         </ClientProtectedRoute>

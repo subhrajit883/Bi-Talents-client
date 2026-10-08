@@ -1,32 +1,36 @@
 
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
-    FiLayout,
-    FiUsers,
-    FiGrid,
     FiStar,
-    FiUserCheck,
-    FiMessageCircle,
-    FiSettings,
     FiLogOut,
     FiChevronRight,
     FiChevronLeft,
 } from "react-icons/fi";
 
-import logo from "../../assets/bia.png";
-import { AiOutlineUserAdd } from "react-icons/ai";
+import logo from "../../assets/bit.png";
 
 const NAV_ITEMS = [
-    { label: "Dashboard", icon: FiLayout, to: "/client/dashboard" },
-    { label: "", icon: AiOutlineUserAdd, to: "/client/candidates" },
+    // { label: "Dashboard", icon: FiLayout, to: "/client/dashboard" },
+    // { label: "Candidates", icon: AiOutlineUserAdd, to: "/client/candidates" },
+    { label: "My Interests", icon: FiStar, to: "/interests" },
 ];
 
 const ClientSidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
 
     const closeSidebar = () => {
         setIsOpen(false);
+    };
+
+    // Handle Logout
+    const handleLogout = () => {
+        localStorage.removeItem("clientToken");
+
+        setIsOpen(false);
+
+        navigate("/login", { replace: true });
     };
 
     return (
@@ -57,16 +61,15 @@ const ClientSidebar = () => {
                     duration-300
                     ease-in-out
 
-                    ${
-                        isOpen
-                            ? "translate-x-0"
-                            : "-translate-x-full md:translate-x-0"
+                    ${isOpen
+                        ? "translate-x-0"
+                        : "-translate-x-full md:translate-x-0"
                     }
                 `}
             >
                 <div className="px-6 pt-7 pb-8">
                     <NavLink
-                        to="/admin"
+                        to="/"
                         onClick={closeSidebar}
                         className="flex items-center justify-center"
                     >
@@ -94,10 +97,9 @@ const ClientSidebar = () => {
                                     rounded-xl
                                     text-sm font-medium
                                     transition-all duration-200
-                                    ${
-                                        isActive
-                                            ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-                                            : "text-slate-300 hover:bg-white/5 hover:text-white"
+                                    ${isActive
+                                        ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
+                                        : "text-slate-300 hover:bg-white/5 hover:text-white"
                                     }
                                     `
                                 }
@@ -112,12 +114,13 @@ const ClientSidebar = () => {
                         );
                     })}
                 </nav>
-                
+
                 <div className="px-4 py-4 mt-auto">
                     <div className="h-px bg-white/10 mb-4" />
 
                     <button
                         type="button"
+                        onClick={handleLogout}
                         className="
                             flex items-center gap-3
                             w-full
@@ -125,8 +128,8 @@ const ClientSidebar = () => {
                             rounded-xl
                             text-sm font-medium
                             text-slate-300
-                            hover:bg-white/5
-                            hover:text-white
+                            hover:bg-red-500/10
+                            hover:text-red-400
                             transition-all duration-200
                         "
                     >
@@ -139,9 +142,7 @@ const ClientSidebar = () => {
                     </button>
                 </div>
 
-                {/* =====================================
-                    MOBILE TOGGLE BUTTON
-                ===================================== */}
+                {/* MOBILE TOGGLE BUTTON */}
                 <button
                     type="button"
                     onClick={() => setIsOpen((prev) => !prev)}
@@ -156,25 +157,18 @@ const ClientSidebar = () => {
                         top-1/2
                         -right-10
                         -translate-y-1/2
-
                         w-10
                         h-16
-
                         flex
                         items-center
                         justify-center
-
                         bg-[#0B1437]
                         text-white
-
                         rounded-r-2xl
                         shadow-xl
-
                         border-l
                         border-white/10
-
                         hover:bg-[#101c49]
-
                         transition-all
                         duration-200
                     "

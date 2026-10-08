@@ -14,18 +14,18 @@ import {
     FiChevronLeft,
 } from "react-icons/fi";
 
-import logo from "../../assets/bia.png";
+import logo from "../../assets/bit.png";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { FaHeart } from "react-icons/fa";
 
 const NAV_ITEMS = [
-    { label: "Dashboard", icon: FiLayout, to: "/admin/dashboard" },
+    // { label: "Dashboard", icon: FiLayout, to: "/admin/dashboard" },
     { label: "Add Candidate", icon: AiOutlineUserAdd, to: "/admin/candidates" },
-        { label: "All Candidates", icon: FiUsers, to: "/admin/allcandidates" },
+    { label: "All Candidates", icon: FiUsers, to: "/admin/allcandidates" },
     { label: "Categories", icon: FiGrid, to: "/admin/categories" },
-    { label: "Interests", icon: FaHeart , to: "/admin/client-interests" },
+    { label: "Interests", icon: FaHeart, to: "/admin/client-interests" },
     { label: "Clients", icon: FiUserCheck, to: "/admin/clients" },
-    { label: "Enquiries", icon: FiMessageCircle, to: "/admin/enquiries" },
+    { label: "Talent Enquiries", icon: FiMessageCircle, to: "/admin/talent-enquiries" },
     // { label: "Settings", icon: FiSettings, to: "/admin/settings" },
 ];
 
@@ -36,9 +36,9 @@ const AdminSidebar = () => {
         setIsOpen(false);
     };
 
-const AdminLogout = () => {
+    const AdminLogout = () => {
         localStorage.removeItem("token");
-        window.location.href = "/";
+        window.location.href = "/adminlogin";
     };
     return (
         <>
@@ -68,22 +68,22 @@ const AdminLogout = () => {
                     duration-300
                     ease-in-out
 
-                    ${
-                        isOpen
-                            ? "translate-x-0"
-                            : "-translate-x-full md:translate-x-0"
+                    ${isOpen
+                        ? "translate-x-0"
+                        : "-translate-x-full md:translate-x-0"
                     }
                 `}
             >
                 <div className="px-6 pt-7 pb-8">
                     <NavLink
-                        to="/admin"
+                        to="/"
                         onClick={closeSidebar}
                         className="flex items-center justify-center"
                     >
                         <img
                             src={logo}
                             alt="logo"
+
                             className="max-w-42.5 max-h-16 object-contain"
                         />
                     </NavLink>
@@ -105,10 +105,9 @@ const AdminLogout = () => {
                                     rounded-xl
                                     text-sm font-medium
                                     transition-all duration-200
-                                    ${
-                                        isActive
-                                            ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
-                                            : "text-slate-300 hover:bg-white/5 hover:text-white"
+                                    ${isActive
+                                        ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
+                                        : "text-slate-300 hover:bg-white/5 hover:text-white"
                                     }
                                     `
                                 }

@@ -1,9 +1,7 @@
-import React from 'react'
+import ClientAuth, { TAB_LOGIN } from "../components/auth/ClientAuth";
 
 function ClientLogin() {
-  return (
-    <div>ClientLogin</div>
-  )
+    return <ClientAuth initialTab={TAB_LOGIN} />;
 }
 
-export default ClientLogin
+export default ClientLogin;

@@ -21,6 +21,9 @@ const AdminClientInterest = () => {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
     /* -------- Fetch Interests -------- */
     const fetchInterests = async () => {
         try {
@@ -98,6 +101,20 @@ const AdminClientInterest = () => {
         });
     }, [interests, search]);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search]);
+
+    const totalFiltered = filteredInterests.length;
+    const totalPages = Math.max(1, Math.ceil(totalFiltered / itemsPerPage));
+    const validCurrentPage = Math.min(currentPage, totalPages);
+
+    const startIndex = (validCurrentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, totalFiltered);
+    const paginatedInterests = useMemo(() => {
+        return filteredInterests.slice(startIndex, endIndex);
+    }, [filteredInterests, startIndex, endIndex]);
+
     return (
         <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-blue-50/40 px-6 py-8 lg:px-10 lg:py-10">
             <div className="max-w-[1400px] mx-auto">
@@ -105,13 +122,6 @@ const AdminClientInterest = () => {
                 {/* ---------- HEADER ---------- */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                     <div>
-                        {/* <div className="flex items-center gap-2 mb-2">
-                            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 text-blue-700 text-xs font-semibold border border-blue-200/50">
-                                <FiStar size={12} />
-                                Client Interest Manager
-                            </span>
-                        </div> */}
-
                         <h1 className="text-3xl lg:text-4xl font-bold tracking-tight bg-linear-to-r from-blue-500 via-blue-600 to-blue-700 bg-clip-text text-transparent">
                             Client Interests
                         </h1>
@@ -120,7 +130,7 @@ const AdminClientInterest = () => {
 
                 {/* ---------- FILTERS ---------- */}
                 <div className="bg-white/80 backdrop-blur rounded-3xl border border-white shadow-xl shadow-slate-200/60 p-5 mb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-end">
+                    <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-center">
 
                         {/* Search */}
                         <div className="relative">
@@ -139,15 +149,26 @@ const AdminClientInterest = () => {
                             />
                         </div>
 
-                        {/* Refresh */}
-                        {/* <button
-                            type="button"
-                            onClick={fetchInterests}
-                            className="h-[50px] px-4 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-blue-400 text-slate-500 hover:text-blue-600 flex items-center justify-center transition-all shadow-sm"
-                            title="Refresh"
-                        >
-                            <FiFilter size={17} />
-                        </button> */}
+                        {/* Items per page dropdown */}
+                        <div className="flex items-center gap-2">
+                            <label htmlFor="items-per-page-interest" className="text-xs font-semibold text-slate-500 whitespace-nowrap">
+                                Show:
+                            </label>
+                            <select
+                                id="items-per-page-interest"
+                                value={itemsPerPage}
+                                onChange={(e) => {
+                                    setItemsPerPage(Number(e.target.value));
+                                    setCurrentPage(1);
+                                }}
+                                className="px-3.5 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-700 text-sm focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-white transition-all cursor-pointer font-medium"
+                            >
+                                <option value={10}>10 per page</option>
+                                <option value={25}>25 per page</option>
+                                <option value={50}>50 per page</option>
+                                <option value={100}>100 per page</option>
+                            </select>
+                        </div>
                     </div>
 
                     {/* Result strip */}
@@ -155,10 +176,14 @@ const AdminClientInterest = () => {
                         <span>
                             Showing{" "}
                             <span className="font-semibold text-slate-700">
-                                {filteredInterests.length}
+                                {totalFiltered === 0 ? 0 : startIndex + 1}
                             </span>{" "}
-                            of {totalInterests} interest
-                            {totalInterests === 1
+                            to{" "}
+                            <span className="font-semibold text-slate-700">
+                                {endIndex}
+                            </span>{" "}
+                            of {totalFiltered} interest
+                            {totalFiltered === 1
                                 ? ""
                                 : "s"}
                         </span>
@@ -167,7 +192,7 @@ const AdminClientInterest = () => {
                             <button
                                 type="button"
                                 onClick={() => setSearch("")}
-                                className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-medium"
+                                className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
                             >
                                 <FiX size={11} />
                                 Clear search
@@ -203,10 +228,6 @@ const AdminClientInterest = () => {
                                         Category
                                     </th>
 
-                                    {/* <th className="text-left px-6 py-5 font-semibold">
-                                        Status
-                                    </th> */}
-
                                     <th className="text-left px-6 py-5 font-semibold">
                                         Date
                                     </th>
@@ -220,7 +241,7 @@ const AdminClientInterest = () => {
                                             <SkeletonRow key={i} />
                                         )
                                     )
-                                ) : filteredInterests.length === 0 ? (
+                                ) : paginatedInterests.length === 0 ? (
                                     <tr>
                                         <td
                                             colSpan={7}
@@ -246,7 +267,7 @@ const AdminClientInterest = () => {
                                                     onClick={() =>
                                                         setSearch("")
                                                     }
-                                                    className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-blue-400 to-blue-600 text-white text-sm font-semibold shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 transition-all"
+                                                    className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-blue-400 to-blue-600 text-white text-sm font-semibold shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 transition-all cursor-pointer"
                                                 >
                                                     <FiX size={14} />
                                                     Clear Search
@@ -255,11 +276,11 @@ const AdminClientInterest = () => {
                                         </td>
                                     </tr>
                                 ) : (
-                                    filteredInterests.map(
+                                    paginatedInterests.map(
                                         (interest, index) => (
                                             <InterestRow
                                                 key={interest._id}
-                                                index={index}
+                                                index={startIndex + index}
                                                 interest={interest}
                                             />
                                         )
@@ -268,6 +289,58 @@ const AdminClientInterest = () => {
                             </tbody>
                         </table>
                     </div>
+
+                    {/* ---------- PAGINATION FOOTER ---------- */}
+                    {totalFiltered > 0 && (
+                        <div className="px-8 py-4 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div className="text-xs text-slate-500">
+                                Page <span className="font-semibold text-slate-700">{validCurrentPage}</span> of{" "}
+                                <span className="font-semibold text-slate-700">{totalPages}</span> ({totalFiltered} total items)
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    disabled={validCurrentPage === 1}
+                                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                    className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
+                                >
+                                    Previous
+                                </button>
+
+                                <div className="flex items-center gap-1">
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                        .filter((p) => p === 1 || p === totalPages || Math.abs(p - validCurrentPage) <= 1)
+                                        .map((p, i, arr) => (
+                                            <div key={p} className="flex items-center">
+                                                {i > 0 && arr[i - 1] !== p - 1 && (
+                                                    <span className="px-1 text-slate-400 text-xs">...</span>
+                                                )}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setCurrentPage(p)}
+                                                    className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all cursor-pointer ${validCurrentPage === p
+                                                        ? "bg-blue-600 text-white shadow-sm"
+                                                        : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                                                        }`}
+                                                >
+                                                    {p}
+                                                </button>
+                                            </div>
+                                        ))}
+                                </div>
+
+                                <button
+                                    type="button"
+                                    disabled={validCurrentPage >= totalPages}
+                                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                    className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

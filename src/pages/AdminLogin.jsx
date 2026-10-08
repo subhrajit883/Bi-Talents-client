@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FiMail, FiEye, FiEyeOff } from "react-icons/fi";
@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 
 // Replace with your own background image
 // import loginBg from "../../../assets/images/login-bg.jpg";
+
+import logo from "../assets/bit.png";
 
 function AdminLogin() {
     const navigate = useNavigate();
@@ -36,7 +38,7 @@ function AdminLogin() {
             if (res.data.success) {
                 localStorage.setItem("token", res.data.token);
                 toast.success("Welcome back, Admin!");
-                navigate("/admin/dashboard");
+                navigate("/admin/allcandidates");
             }
         } catch (err) {
             console.error(err);
@@ -50,12 +52,18 @@ function AdminLogin() {
         }
     };
 
+    // if already logged in, redirect to admin dashboard
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            navigate("/admin/allcandidates");
+        }
+    }, [navigate]);
+
+
     return (
         <div
             className="relative flex min-h-screen items-center justify-center bg-cover bg-center"
-        // style={{
-        //     backgroundImage: `url(${loginBg})`,
-        // }}
         >
             {/* Overlay */}
             <div className="absolute inset-0 bg-black/75"></div>
@@ -64,9 +72,12 @@ function AdminLogin() {
             <div className="relative z-10 w-full max-w-md rounded-xl bg-white px-8 py-10 shadow-2xl">
 
                 <div className="text-center">
+                    <div className="flex justify-center mb-4">
+                        <img src={logo} alt="Bi Talents Logo" className="h-16 w-auto object-contain" />
+                    </div>
 
                     <h1 className="text-3xl font-bold text-gray-900">
-                        Welcome Back
+                        Welcome Admin
                     </h1>
 
                     <p className="mt-2 text-sm text-gray-500">

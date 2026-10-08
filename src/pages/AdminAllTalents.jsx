@@ -40,6 +40,9 @@ const AdminAllTalents = () => {
     const [search, setSearch] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("all");
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
     const [showCatDropdown, setShowCatDropdown] = useState(false);
     const [deletingId, setDeletingId] = useState(null);
     const [confirmDelete, setConfirmDelete] = useState(null);
@@ -115,6 +118,20 @@ const AdminAllTalents = () => {
         });
     }, [talents, search, categoryFilter]);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, categoryFilter]);
+
+    const totalFiltered = filteredTalents.length;
+    const totalPages = Math.max(1, Math.ceil(totalFiltered / itemsPerPage));
+    const validCurrentPage = Math.min(currentPage, totalPages);
+
+    const startIndex = (validCurrentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, totalFiltered);
+    const paginatedTalents = useMemo(() => {
+        return filteredTalents.slice(startIndex, endIndex);
+    }, [filteredTalents, startIndex, endIndex]);
+
     const handleDelete = async (t) => {
         try {
             setDeletingId(t._id);
@@ -134,9 +151,9 @@ const AdminAllTalents = () => {
         categoryFilter === "all"
             ? "All Categories"
             : categories.find(
-                  (c) =>
-                      c._id === categoryFilter || c.name === categoryFilter
-              )?.name || "All Categories";
+                (c) =>
+                    c._id === categoryFilter || c.name === categoryFilter
+            )?.name || "All Categories";
 
     return (
         <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 px-6 py-8 lg:px-10 lg:py-10">
@@ -144,16 +161,10 @@ const AdminAllTalents = () => {
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                     <div>
-                        {/* <div className="flex items-center gap-2 mb-2">
-                            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 text-blue-700 text-xs font-semibold border border-blue-200/50">
-                                <FiUsers size={12} />
-                                Talent Directory
-                            </span>
-                        </div> */}
                         <h1 className="text-3xl lg:text-4xl font-bold tracking-tight bg-linear-to-r from-blue-500 via-blue-600 to-blue-700 bg-clip-text text-transparent">
                             All Candidates
                         </h1>
-                        <p className="text-slate-500 text-sm mt-2">                         
+                        <p className="text-slate-500 text-sm mt-2">
                             {meta.total} candidate
                             {meta.total !== 1 && "s"} registered
                         </p>
@@ -169,7 +180,7 @@ const AdminAllTalents = () => {
 
                 {/* Filters */}
                 <div className="relative z-20  bg-white/80 backdrop-blur  rounded-3xl border border-white shadow-xl shadow-slate-200/60 p-5 mb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-3 items-end">
+                    <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-3 items-center">
                         {/* Search */}
                         <div className="relative">
                             <FiSearch
@@ -191,7 +202,7 @@ const AdminAllTalents = () => {
                                 onClick={() =>
                                     setShowCatDropdown((v) => !v)
                                 }
-                                className="w-full md:w-[230px] flex items-center justify-between gap-2 px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-blue-400 transition-all"
+                                className="w-full md:w-[230px] flex items-center justify-between gap-2 px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-blue-400 transition-all cursor-pointer"
                             >
                                 <span className="flex items-center gap-2 text-sm">
                                     {categoryFilter === "all" ? (
@@ -206,11 +217,10 @@ const AdminAllTalents = () => {
                                         />
                                     )}
                                     <span
-                                        className={`truncate ${
-                                            categoryFilter === "all"
-                                                ? "text-slate-500"
-                                                : "font-medium text-slate-700"
-                                        }`}
+                                        className={`truncate ${categoryFilter === "all"
+                                            ? "text-slate-500"
+                                            : "font-medium text-slate-700"
+                                            }`}
                                     >
                                         {selectedCategoryName}
                                     </span>
@@ -223,7 +233,7 @@ const AdminAllTalents = () => {
                                                 e.stopPropagation();
                                                 setCategoryFilter("all");
                                             }}
-                                            className="w-5 h-5 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors"
+                                            className="w-5 h-5 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer"
                                             title="Clear filter"
                                         >
                                             <FiX size={11} />
@@ -231,11 +241,10 @@ const AdminAllTalents = () => {
                                     )}
                                     <FiChevronDown
                                         size={15}
-                                        className={`text-slate-400 transition-transform  duration-200 ${
-                                            showCatDropdown
-                                                ? "rotate-180 text-blue-500"
-                                                : ""
-                                        }`}
+                                        className={`text-slate-400 transition-transform  duration-200 ${showCatDropdown
+                                            ? "rotate-180 text-blue-500"
+                                            : ""
+                                            }`}
                                     />
                                 </span>
                             </button>
@@ -249,11 +258,10 @@ const AdminAllTalents = () => {
                                                     setCategoryFilter("all");
                                                     setShowCatDropdown(false);
                                                 }}
-                                                className={`w-full text-left px-4 py-2.5 text-sm transition-all flex items-center justify-between ${
-                                                    categoryFilter === "all"
-                                                        ? "bg-blue-50 text-blue-700 font-semibold"
-                                                        : "text-slate-700 hover:bg-slate-50"
-                                                }`}
+                                                className={`w-full text-left px-4 py-2.5 text-sm transition-all flex items-center justify-between cursor-pointer ${categoryFilter === "all"
+                                                    ? "bg-blue-50 text-blue-700 font-semibold"
+                                                    : "text-slate-700 hover:bg-slate-50"
+                                                    }`}
                                             >
                                                 All Categories
                                                 {categoryFilter === "all" && (
@@ -279,11 +287,10 @@ const AdminAllTalents = () => {
                                                                 false
                                                             );
                                                         }}
-                                                        className={`w-full text-left px-4 py-2.5 text-sm transition-all flex items-center justify-between ${
-                                                            active
-                                                                ? "bg-blue-50 text-blue-700 font-semibold"
-                                                                : "text-slate-700 hover:bg-slate-50"
-                                                        }`}
+                                                        className={`w-full text-left px-4 py-2.5 text-sm transition-all flex items-center justify-between cursor-pointer ${active
+                                                            ? "bg-blue-50 text-blue-700 font-semibold"
+                                                            : "text-slate-700 hover:bg-slate-50"
+                                                            }`}
                                                     >
                                                         <span className="flex items-center gap-2">
                                                             <FiHash
@@ -306,15 +313,26 @@ const AdminAllTalents = () => {
                             )}
                         </div>
 
-                        {/* Visual Filter icon */}
-                        {/* <button
-                            type="button"
-                            onClick={fetchTalents}
-                            className="h-[50px] px-4 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-blue-400 text-slate-500 hover:text-blue-600 flex items-center justify-center transition-all shadow-sm"
-                            title="Refresh"
-                        >
-                            <FiFilter size={17} />
-                        </button> */}
+                        {/* Items per page dropdown */}
+                        <div className="flex items-center gap-2">
+                            <label htmlFor="items-per-page-alltalents" className="text-xs font-semibold text-slate-500 whitespace-nowrap">
+                                Show:
+                            </label>
+                            <select
+                                id="items-per-page-alltalents"
+                                value={itemsPerPage}
+                                onChange={(e) => {
+                                    setItemsPerPage(Number(e.target.value));
+                                    setCurrentPage(1);
+                                }}
+                                className="px-3.5 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-700 text-sm focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-white transition-all cursor-pointer font-medium"
+                            >
+                                <option value={10}>10 per page</option>
+                                <option value={25}>25 per page</option>
+                                <option value={50}>50 per page</option>
+                                <option value={100}>100 per page</option>
+                            </select>
+                        </div>
                     </div>
 
                     {/* Result strip */}
@@ -322,9 +340,13 @@ const AdminAllTalents = () => {
                         <span>
                             Showing{" "}
                             <span className="font-semibold text-slate-700">
-                                {filteredTalents.length}
+                                {totalFiltered === 0 ? 0 : startIndex + 1}
                             </span>{" "}
-                            of {meta.total} candidates
+                            to{" "}
+                            <span className="font-semibold text-slate-700">
+                                {endIndex}
+                            </span>{" "}
+                            of {totalFiltered} candidate{totalFiltered === 1 ? "" : "s"}
                         </span>
                         {(search || categoryFilter !== "all") && (
                             <button
@@ -333,7 +355,7 @@ const AdminAllTalents = () => {
                                     setSearch("");
                                     setCategoryFilter("all");
                                 }}
-                                className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-medium"
+                                className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
                             >
                                 <FiX size={11} /> Clear filters
                             </button>
@@ -360,6 +382,9 @@ const AdminAllTalents = () => {
                                         Age
                                     </th>
                                     <th className="text-left px-6 py-5 font-semibold">
+                                        We Recommend
+                                    </th>
+                                    <th className="text-left px-6 py-5 font-semibold">
                                         Categories
                                     </th>
                                     <th className="text-left px-6 py-5 font-semibold">
@@ -375,10 +400,10 @@ const AdminAllTalents = () => {
                                     Array.from({ length: 5 }).map((_, i) => (
                                         <SkeletonRow key={i} />
                                     ))
-                                ) : filteredTalents.length === 0 ? (
+                                ) : paginatedTalents.length === 0 ? (
                                     <tr>
                                         <td
-                                            colSpan={7}
+                                            colSpan={8}
                                             className="px-8 py-20 text-center"
                                         >
                                             <div className="mx-auto w-20 h-20 rounded-3xl bg-gradient-to-br from-slate-100 to-blue-50 flex items-center justify-center text-slate-400 mb-4">
@@ -389,7 +414,7 @@ const AdminAllTalents = () => {
                                             </h3>
                                             <p className="text-sm text-slate-500 max-w-sm mx-auto">
                                                 {search ||
-                                                categoryFilter !== "all"
+                                                    categoryFilter !== "all"
                                                     ? "Try adjusting your search or filters."
                                                     : "Add your first candidate to get started."}
                                             </p>
@@ -406,7 +431,7 @@ const AdminAllTalents = () => {
                                         </td>
                                     </tr>
                                 ) : (
-                                    filteredTalents.map((t) => (
+                                    paginatedTalents.map((t) => (
                                         <TalentRow
                                             key={t._id}
                                             talent={t}
@@ -430,6 +455,58 @@ const AdminAllTalents = () => {
                             </tbody>
                         </table>
                     </div>
+
+                    {/* ---------- PAGINATION FOOTER ---------- */}
+                    {totalFiltered > 0 && (
+                        <div className="px-8 py-4 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div className="text-xs text-slate-500">
+                                Page <span className="font-semibold text-slate-700">{validCurrentPage}</span> of{" "}
+                                <span className="font-semibold text-slate-700">{totalPages}</span> ({totalFiltered} total candidates)
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    disabled={validCurrentPage === 1}
+                                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                    className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
+                                >
+                                    Previous
+                                </button>
+
+                                <div className="flex items-center gap-1">
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                        .filter((p) => p === 1 || p === totalPages || Math.abs(p - validCurrentPage) <= 1)
+                                        .map((p, i, arr) => (
+                                            <div key={p} className="flex items-center">
+                                                {i > 0 && arr[i - 1] !== p - 1 && (
+                                                    <span className="px-1 text-slate-400 text-xs">...</span>
+                                                )}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setCurrentPage(p)}
+                                                    className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all cursor-pointer ${validCurrentPage === p
+                                                        ? "bg-blue-600 text-white shadow-sm"
+                                                        : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                                                        }`}
+                                                >
+                                                    {p}
+                                                </button>
+                                            </div>
+                                        ))}
+                                </div>
+
+                                <button
+                                    type="button"
+                                    disabled={validCurrentPage >= totalPages}
+                                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                    className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-2xs cursor-pointer"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -504,6 +581,17 @@ const TalentRow = ({
                     <span className="text-slate-300">—</span>
                 )}
             </td>
+            <td className="px-6 py-5 text-slate-700 font-medium">
+                {t.recommendTalent ? (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                        Yes
+                    </span>
+                ) : (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 text-xs font-semibold">
+                        No
+                    </span>
+                )}
+            </td>
             <td className="px-6 py-5">
                 <div className="flex flex-wrap gap-1.5 max-w-[220px]">
                     {catList.length === 0 && (
@@ -529,11 +617,10 @@ const TalentRow = ({
             <td className="px-6 py-5">
                 <div className="flex items-center gap-3 text-xs">
                     <span
-                        className={`inline-flex items-center gap-1.5 font-medium ${
-                            imgCount > 0
-                                ? "text-slate-700"
-                                : "text-slate-400"
-                        }`}
+                        className={`inline-flex items-center gap-1.5 font-medium ${imgCount > 0
+                            ? "text-slate-700"
+                            : "text-slate-400"
+                            }`}
                     >
                         <FiImage
                             size={13}
@@ -546,11 +633,10 @@ const TalentRow = ({
                         {imgCount}
                     </span>
                     <span
-                        className={`inline-flex items-center gap-1.5 font-medium ${
-                            vidCount > 0
-                                ? "text-slate-700"
-                                : "text-slate-400"
-                        }`}
+                        className={`inline-flex items-center gap-1.5 font-medium ${vidCount > 0
+                            ? "text-slate-700"
+                            : "text-slate-400"
+                            }`}
                     >
                         <FiVideo
                             size={13}
